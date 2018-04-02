@@ -1,13 +1,17 @@
 #%%
+import os
+os.chdir("/media/finn/lin_data/Projects/TFL/images")
 
 class CamSession():
     global r
     global json
     global pd
+    global urllib
     
     import requests as r
     import json
     import pandas as pd
+    import urllib
     
 
     url = "https://api.tfl.gov.uk/Place/Type/JamCam"
@@ -62,17 +66,11 @@ if __name__ == "__main__":
     obj.parse()
     result = obj.raw_json
     df = obj.parsed_df
+    img = df.imageUrl.values[0]
     
 #%%
-    
-class cdict(dict):
-    
-    def add(self,tupl):
-        
-        self[tupl[0]] = tupl[1]
-        
-        return self
-        
-cd = cdict({"a":"B"})
 
-cd.add((0,1))
+import urllib
+
+urllib.request.urlretrieve(img,"1.jpg")
+
