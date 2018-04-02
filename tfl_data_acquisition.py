@@ -54,6 +54,11 @@ class CamSession():
             self.parsed_df[[col,col + "_time"]] =  pd.DataFrame(
                 
                 self.parsed_df[col].tolist(), index= self.parsed_df.index)
+            
+    
+    def image_download(self, images = []):
+        
+        print(list(self.parsed_df.imageUrl))
         
     
     
@@ -66,7 +71,7 @@ if __name__ == "__main__":
     obj.parse()
     result = obj.raw_json
     df = obj.parsed_df
-    img = df.imageUrl.values[0]
+    obj.image_download()
     
 #%%
 
