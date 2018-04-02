@@ -1,4 +1,10 @@
 #%%
+# Scroll closer to the bottome, there you'll find the download media function 
+# call please change that to where you want your videos and images saved to.
+
+# TO DO:
+#  1. Implement Memoisation for image downloading. No point accidentally 
+#     reruning stuff.
 
 class CamSession():
     global r
@@ -35,9 +41,27 @@ class CamSession():
         
         self.parsed_json = {
                 
-                di["commonName"]:
+                di["commonName"]: di for di in self.raw_json
+                
+                }
+                     
+        for key in self.parsed_json:
+            
+            di = self.parsed_json[key]
+            
+            result = {}
+            
+            # Pick out the relevant Long and Lat values, might need them
+            
+            result["lat"] = di["lat"]
+            
+            result["lon"] = di["lon"]
+            
+            # Use list comprehension to pick up the other key stuff
+            
+            result.update(
                     
-                        {
+                    {
                            
                             di2["key"]:
                             
@@ -50,15 +74,18 @@ class CamSession():
                             for di2 in di["additionalProperties"]
                         
                         }
+                    
+                    
+                    )
+            
+            self.parsed_json[key] = result
                             
-                            for di in self.raw_json
-                
-                }
-                            
-                            
-                            
+        # Parse the dictionary into a dataframe                 
         
         self.parsed_df = pd.DataFrame(self.parsed_json).T
+        
+        # for the preset columns that we collected the time modified, split it 
+        # out into two seperate columns
         
         for col in cols :
             
@@ -71,11 +98,25 @@ class CamSession():
         
         
     
-    def image_download(self):
+    def download_media(self, url_col, path = "."):
         
-        ''' Function to download images from the API responses '''
+        '''
         
-        urls = for i in 
+        Function to download images from the API responses
+        At the moment this doesn't involve multithreading.
+        
+        Takes about 4 min 30 secs to complete
+        
+        Not happy about specifying path as a string, should use pathlib 
+        or at least os.joins >:( need more time to iron this out laters.
+        
+        '''
+        for url in self.parsed_df[url_col].values:
+            
+                        
+            file_name = urllib.parse.urlsplit(url).path.split(sep = "/")[-1]
+            
+            urllib.request.urlretrieve(url, path + "/" + file_name)
         
         
         print("____images_downloaded____")
@@ -89,8 +130,8 @@ if __name__ == "__main__":
     
     obj = CamSession()
     obj.parse()
-    obj.image_download()
+    obj.download_media("imageUrl", "/home/finn/Desktop/Link to TFL/images")
+    obj.download_media("videoUrl", "/home/finn/Desktop/Link to TFL/videos")
     result = obj.raw_json
     df = obj.parsed_df
-    obj.image_download()
     
