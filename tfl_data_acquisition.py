@@ -1,4 +1,5 @@
 #%%
+
 # Scroll closer to the bottome, there you'll find the download media function 
 # call please change that to where you want your videos and images saved to.
 
@@ -7,6 +8,7 @@
 #     reruning stuff.
 
 class CamSession():
+    
     global r
     global json
     global pd
@@ -27,7 +29,7 @@ class CamSession():
         
         ''' Initialise class and read the JSON respons from the API '''
         
-        self.raw_json = json.loads(r.get(self.url).text)
+        self.raw_json = r.get(self.url).json()
         
         
     def parse(self, cols = ["imageUrl","videoUrl"]):
@@ -92,13 +94,13 @@ class CamSession():
             self.parsed_df[[col,col + "_time"]] =  pd.DataFrame(
                 
                 self.parsed_df[col].tolist(),
-                index= self.parsed_df.index
+                index = self.parsed_df.index
                 
                 )
         
         
     
-    def download_media(self, url_col, path = "."):
+    def download_media(self, url_col, path):
         
         '''
         
@@ -121,8 +123,6 @@ class CamSession():
         
         print("____images_downloaded____")
         
-    
-    
 
 
 
@@ -130,8 +130,13 @@ if __name__ == "__main__":
     
     obj = CamSession()
     obj.parse()
-    obj.download_media("imageUrl", "/home/finn/Desktop/Link to TFL/images")
-    obj.download_media("videoUrl", "/home/finn/Desktop/Link to TFL/videos")
+    obj.download_media("imageUrl", r"C:\Users\Admin\Documents\TfLdata\TFL\images")
+#    obj.download_media("videoUrl", "/home/finn/Desktop/Link to TFL/videos")
     result = obj.raw_json
     df = obj.parsed_df
+
     
+
+    
+
+
